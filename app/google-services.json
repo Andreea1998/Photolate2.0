@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "845072011828",
+    "firebase_url": "https://photolate-2a3a3.firebaseio.com",
+    "project_id": "photolate-2a3a3",
+    "storage_bucket": "photolate-2a3a3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:845072011828:android:7f6bf347963fce188fb061",
+        "android_client_info": {
+          "package_name": "com.ajeetkumar.textdetectionusingmlkit"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "845072011828-urqnrlflpgr2q5i8j781vq3lpjd7un7t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBzet668AuEt0TTisoHhQWMFjjyAJcwCNY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "845072011828-urqnrlflpgr2q5i8j781vq3lpjd7un7t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

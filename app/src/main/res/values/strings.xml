@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Photolate</string>
+    <string name="result">Translated text</string>
+    <string name="image">Translated image preview</string>
+</resources>
