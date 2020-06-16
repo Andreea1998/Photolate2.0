@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:845072011828:android:7f6bf347963fce188fb061",
         "android_client_info": {
-          "package_name": "com.ajeetkumar.textdetectionusingmlkit"
+          "package_name": "com.example.photolate"
         }
       },
       "oauth_client": [

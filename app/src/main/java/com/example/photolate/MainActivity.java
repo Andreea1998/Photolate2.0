@@ -1,27 +1,41 @@
 package com.example.photolate;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import android.Manifest;
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.StrictMode;
+import android.provider.MediaStore;
+import android.view.Menu;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import android.Manifest;
-import android.content.ContentValues;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.net.Uri;
-import android.os.Bundle;
-import android.provider.MediaStore;
-import android.view.Menu;
-import android.view.View;
-import android.widget.Toast;
-
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.cloud.translate.Translate;
+import com.google.cloud.translate.TranslateOptions;
+import com.google.cloud.translate.Translation;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,6 +43,14 @@ public class MainActivity extends AppCompatActivity {
     private static final int STORAGE_REQUEST_CODE = 400;
     private static final int IMAGE_PICK_GALLERY_CODE = 1000;
     private static final int IMAGE_PICK_CAMERA_CODE = 1001;
+
+    private EditText inputToTranslate;
+    private TextView translatedTv;
+    private String originalText;
+    private String translatedText;
+    private boolean connected;
+    Translate translate;
+
 
     String[] cameraPermission;
     String[] storagePermission;
@@ -52,7 +74,111 @@ public class MainActivity extends AppCompatActivity {
                 showImageImportDialog();
             }
         });
+
+        //start
+//------------------de aici am pus eu-------------
+//        Spinner mySpinner0 = (Spinner)findViewById(R.id.spinner0);
+//
+//        ArrayAdapter<String> myAdapter0 = new ArrayAdapter<String>(MainActivity.this,
+//                android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.fromlanguage));
+//        myAdapter0.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        mySpinner0.setAdapter(myAdapter0);
+
+        Spinner mySpinner1 = (Spinner)findViewById(R.id.spinner1);
+
+        ArrayAdapter<String> myAdapter1 = new ArrayAdapter<String>(MainActivity.this,
+                android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.tolanguage));
+        myAdapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mySpinner1.setAdapter(myAdapter1);
+
+        System.out.print("merge");
+
+        String text = mySpinner1.getSelectedItem().toString();
+        System.out.print("--------------------------------");
+        System.out.print(text);
+        System.out.print("----------------------hereeee----------------");
+
+
+//        mySpinner0.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                System.out.print("Spinner selected : ");
+//                System.out.print( parent.getItemAtPosition(position).toString());
+//            }
+//            @Override
+//            public void onNothingSelected(AdapterView<?> parent) {
+//                System.out.print("Nothing selected");
+//            }
+//        } );
+
+        inputToTranslate = findViewById(R.id.inputToTranslate);
+        translatedTv = findViewById(R.id.translatedTv);
+        Button translateButton = findViewById(R.id.translateButton);
+
+        translateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (checkInternetConnection()) {
+
+                    //If there is internet connection, get translate service and start translation:
+                    getTranslateService();
+                    translate();
+
+                } else {
+
+                    //If not, display "no connection" warning:
+                    translatedTv.setText(getResources().getString(R.string.no_connection));
+                }
+
+            }
+        });
+
     }
+
+    public void getTranslateService() {
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        try (InputStream is = getResources().openRawResource(R.raw.credentials)) {
+
+            //Get credentials:
+            final GoogleCredentials myCredentials = GoogleCredentials.fromStream(is);
+            System.out.println("aici");
+            //Set credentials and get translate service:
+            TranslateOptions translateOptions = TranslateOptions.newBuilder().setCredentials(myCredentials).build();
+            translate = translateOptions.getService();
+            System.out.println("translate");
+
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+
+        }
+    }
+
+    public void  translate() {
+        originalText = inputToTranslate.getText().toString();
+        Translation translation = translate.translate(originalText, Translate.TranslateOption.targetLanguage("en"), Translate.TranslateOption.model("base"));
+        translatedText = translation.getTranslatedText();
+
+        //Translated text and original text are set to TextViews:
+        translatedTv.setText(translatedText);
+
+
+    }
+
+    public boolean checkInternetConnection() {
+
+        //Check internet connection:
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        //Means that we are connected to a network (mobile or wi-fi)
+        connected = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED;
+
+        return connected;
+    }
+
 
     //actionbar menu
     @Override
@@ -139,7 +265,7 @@ public class MainActivity extends AppCompatActivity {
 
     //handle permission result
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch(requestCode){
             case CAMERA_REQUEST_CODE:
                 if(grantResults.length > 0){
@@ -170,7 +296,7 @@ public class MainActivity extends AppCompatActivity {
     //handle image result
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         //got image from camera
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {

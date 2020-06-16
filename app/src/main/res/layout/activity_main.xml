@@ -7,6 +7,46 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            tools:context=".MainActivity">
+
+
+                <Spinner
+                    android:id="@+id/spinner1"
+                    android:layout_width="match_parent"
+                    android:layout_height="59dp"
+                    android:layout_marginTop="94dp" />
+
+                <EditText
+                    android:id="@+id/inputToTranslate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="48dp"
+                    android:layout_marginBottom="16dp"
+                    android:ems="10"
+                    android:hint="Enter text"
+                    android:inputType="text" />
+
+                <Button
+                    android:id="@+id/translateButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="32dp"
+                    android:text="Translate" />
+
+                <TextView
+                    android:id="@+id/translatedTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:textSize="16sp" />
+        </LinearLayout>
+
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab"
             android:layout_width="wrap_content"
@@ -14,6 +54,7 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
             android:layout_margin="20dp"
-            app:srcCompat="@drawable/ic_add_circle" />
+            app:srcCompat="@drawable/ic_add_circle"
+            android:layout_alignParentRight="true" />
 
 </RelativeLayout>

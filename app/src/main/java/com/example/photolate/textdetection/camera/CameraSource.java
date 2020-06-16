@@ -16,14 +16,11 @@ package com.example.photolate.textdetection.camera;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
-//import android.support.annotation.Nullable;
-//import android.support.annotation.RequiresPermission;
 import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
@@ -31,6 +28,7 @@ import android.view.WindowManager;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresPermission;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.photolate.textdetection.others.FrameMetadata;
 import com.example.photolate.textdetection.others.GraphicOverlay;
@@ -44,6 +42,9 @@ import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+
+//import android.support.annotation.Nullable;
+//import android.support.annotation.RequiresPermission;
 
 /**
  * Manages the camera and allows UI updates on top of it (e.g. overlaying extra Graphics or
@@ -73,7 +74,7 @@ public class CameraSource {
    */
   private static final float ASPECT_RATIO_TOLERANCE = 0.01f;
 
-  protected Activity activity;
+  protected AppCompatActivity activity;
 
   private Camera camera;
 
@@ -130,7 +131,7 @@ public class CameraSource {
    */
   private final Map<byte[], ByteBuffer> bytesToByteBuffer = new IdentityHashMap<>();
 
-  public CameraSource(Activity activity, GraphicOverlay overlay) {
+  public CameraSource(AppCompatActivity activity, GraphicOverlay overlay) {
     this.activity = activity;
     graphicOverlay = overlay;
     graphicOverlay.clear();

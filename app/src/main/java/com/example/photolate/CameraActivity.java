@@ -1,28 +1,15 @@
 package com.example.photolate;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
-import android.graphics.Canvas;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.SparseArray;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
-import android.widget.TextView;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 
-import com.google.android.gms.vision.Detector;
-import com.google.android.gms.vision.text.TextBlock;
-import com.google.android.gms.vision.text.TextRecognizer;
 import com.example.photolate.textdetection.camera.CameraSource;
 import com.example.photolate.textdetection.camera.CameraSourcePreview;
 import com.example.photolate.textdetection.others.GraphicOverlay;
 import com.example.photolate.textdetection.text_detection.TextRecognitionProcessor;
 import com.google.firebase.FirebaseApp;
-
 
 import java.io.IOException;
 
