@@ -36,7 +36,7 @@ public class TextGraphic extends GraphicOverlay.Graphic {
     private final FirebaseVisionText.Element text;
     private String textValue;
 
-    TextGraphic(GraphicOverlay overlay, FirebaseVisionText.Element text, String translated) {
+    public TextGraphic(GraphicOverlay overlay, FirebaseVisionText.Element text, String translated) {
         super(overlay);
 
         this.text = text;
