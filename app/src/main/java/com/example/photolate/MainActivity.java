@@ -45,8 +45,6 @@ public class MainActivity extends AppCompatActivity {
     private static final int IMAGE_PICK_GALLERY_CODE = 1000;
     private static final int IMAGE_PICK_CAMERA_CODE = 1001;
 
-    private EditText inputToTranslate;
-    private TextView translatedTv;
     public static Translate translate;
     private static String translateTo;
 
@@ -100,13 +98,6 @@ public class MainActivity extends AppCompatActivity {
         myAdapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mySpinner.setAdapter(myAdapter1);
 
-        System.out.print("merge");
-
-        String text = mySpinner.getSelectedItem().toString();
-        System.out.print("--------------------------------");
-        System.out.print(text);
-        System.out.print("----------------------hereeee----------------");
-
         mySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -119,27 +110,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        inputToTranslate = findViewById(R.id.inputToTranslate);
-        translatedTv = findViewById(R.id.translatedTv);
-        Button translateButton = findViewById(R.id.translateButton);
-
-        translateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if (checkInternetConnection()) {
-
-                    //If there is internet connection, get translate service and start translation:
-                    getTranslateService();
-                    translate();
-
-                } else {
-
-                    //If not, display "no connection" warning:
-                    translatedTv.setText(getResources().getString(R.string.no_connection));
-                }
-            }
-        });
+        if (checkInternetConnection()) {
+            //If there is internet connection, get translate service
+            getTranslateService();
+        }
 
     }
 
@@ -151,11 +125,10 @@ public class MainActivity extends AppCompatActivity {
 
             //Get credentials:
             final GoogleCredentials myCredentials = GoogleCredentials.fromStream(is);
-            System.out.println("aici");
+
             //Set credentials and get translate service:
             TranslateOptions translateOptions = TranslateOptions.newBuilder().setCredentials(myCredentials).build();
             translate = translateOptions.getService();
-            System.out.println("translate");
 
         } catch (IOException ioe) {
             ioe.printStackTrace();
@@ -163,27 +136,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void translate() {
-        String originalText = inputToTranslate.getText().toString();
-        Translation translation = translate.translate(originalText, Translate.TranslateOption.targetLanguage(getLanguage(translateTo)), Translate.TranslateOption.model("base"));
-        String translatedText = translation.getTranslatedText();
-
-        //Translated text and original text are set to TextViews:
-        translatedTv.setText(translatedText);
-    }
-
     public boolean checkInternetConnection() {
-
         //Check internet connection:
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
         //Means that we are connected to a network (mobile or wi-fi)
-        boolean connected = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+        return connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
                 connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED;
-
-        return connected;
     }
-
 
     //actionbar menu
     @Override

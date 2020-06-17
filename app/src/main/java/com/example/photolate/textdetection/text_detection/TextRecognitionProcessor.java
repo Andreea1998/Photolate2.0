@@ -61,7 +61,6 @@ public class TextRecognitionProcessor {
     private static final String TAG = "TextRecProc";
 
     private final FirebaseVisionTextRecognizer detector;
-    Translate translate;
 
     // Whether we should ignore process(). This is usually caused by feeding input data faster than
     // the model can handle.
@@ -112,7 +111,7 @@ public class TextRecognitionProcessor {
     private String translate(String originalText) {
 
         String language = MainActivity.getLanguage(MainActivity.getTranslateTo());
-        Translation translation = translate.translate(originalText, Translate.TranslateOption.targetLanguage(language), Translate.TranslateOption.model("base"));
+        Translation translation = MainActivity.translate.translate(originalText, Translate.TranslateOption.targetLanguage(language), Translate.TranslateOption.model("base"));
         return translation.getTranslatedText();
     }
 
@@ -128,15 +127,14 @@ public class TextRecognitionProcessor {
             for (int j = 0; j < lines.size(); j++) {
 
                 List<FirebaseVisionText.Element> elements = lines.get(j).getElements();
+                String word = " ";
                 for (int k = 0; k < elements.size(); k++) {
 
-                    String word = elements.get(k).getText();
-                    String translated = translate(word);
-
-                    GraphicOverlay.Graphic textGraphic = new TextGraphic(graphicOverlay, elements.get(k), translated);
-                    graphicOverlay.add(textGraphic);
-
+                    word = word + " " + elements.get(k).getText() + " ";
                 }
+                String translated = translate(word);
+                GraphicOverlay.Graphic textGraphic = new TextGraphic(graphicOverlay, lines.get(j), translated);
+                graphicOverlay.add(textGraphic);
             }
         }
     }
