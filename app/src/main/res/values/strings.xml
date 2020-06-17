@@ -4,9 +4,10 @@
     <string name="image">Translated image preview</string>
     <string name="no_connection">No internet connection => Cannot be translated!</string>
     <string-array name="tolanguage">
-        <item>English</item>
-        <item>French</item>
         <item>Romanian</item>
+        <item>English</item>
+        <item>Italian</item>
         <item>Spanish</item>
+        <item>French</item>
     </string-array>
 </resources>

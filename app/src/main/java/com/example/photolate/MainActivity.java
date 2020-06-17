@@ -14,6 +14,7 @@ import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -46,16 +47,33 @@ public class MainActivity extends AppCompatActivity {
 
     private EditText inputToTranslate;
     private TextView translatedTv;
-    private String originalText;
-    private String translatedText;
-    private boolean connected;
-    Translate translate;
-
+    public static Translate translate;
+    private static String translateTo;
 
     String[] cameraPermission;
     String[] storagePermission;
 
     Uri image_uri;
+
+    public static String getTranslateTo() {
+        return translateTo;
+    }
+
+    public static String getLanguage(String longLanguage) {
+        switch (longLanguage) {
+            case "English":
+                return "en";
+            case "Spanish":
+                return "es";
+            case "Romanian":
+                return "ro";
+            case "French":
+                return "fr";
+            case "Italian":
+                return "it";
+        }
+        return "";
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,41 +93,31 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //start
-//------------------de aici am pus eu-------------
-//        Spinner mySpinner0 = (Spinner)findViewById(R.id.spinner0);
-//
-//        ArrayAdapter<String> myAdapter0 = new ArrayAdapter<String>(MainActivity.this,
-//                android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.fromlanguage));
-//        myAdapter0.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//        mySpinner0.setAdapter(myAdapter0);
+        Spinner mySpinner = findViewById(R.id.spinner1);
 
-        Spinner mySpinner1 = (Spinner)findViewById(R.id.spinner1);
-
-        ArrayAdapter<String> myAdapter1 = new ArrayAdapter<String>(MainActivity.this,
+        ArrayAdapter<String> myAdapter1 = new ArrayAdapter<>(MainActivity.this,
                 android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.tolanguage));
         myAdapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mySpinner1.setAdapter(myAdapter1);
+        mySpinner.setAdapter(myAdapter1);
 
         System.out.print("merge");
 
-        String text = mySpinner1.getSelectedItem().toString();
+        String text = mySpinner.getSelectedItem().toString();
         System.out.print("--------------------------------");
         System.out.print(text);
         System.out.print("----------------------hereeee----------------");
 
+        mySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                translateTo = parent.getItemAtPosition(position).toString();
+                System.out.println("Selected " + translateTo);
+            }
 
-//        mySpinner0.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                System.out.print("Spinner selected : ");
-//                System.out.print( parent.getItemAtPosition(position).toString());
-//            }
-//            @Override
-//            public void onNothingSelected(AdapterView<?> parent) {
-//                System.out.print("Nothing selected");
-//            }
-//        } );
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
 
         inputToTranslate = findViewById(R.id.inputToTranslate);
         translatedTv = findViewById(R.id.translatedTv);
@@ -130,7 +138,6 @@ public class MainActivity extends AppCompatActivity {
                     //If not, display "no connection" warning:
                     translatedTv.setText(getResources().getString(R.string.no_connection));
                 }
-
             }
         });
 
@@ -156,15 +163,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void  translate() {
-        originalText = inputToTranslate.getText().toString();
-        Translation translation = translate.translate(originalText, Translate.TranslateOption.targetLanguage("en"), Translate.TranslateOption.model("base"));
-        translatedText = translation.getTranslatedText();
+    public void translate() {
+        String originalText = inputToTranslate.getText().toString();
+        Translation translation = translate.translate(originalText, Translate.TranslateOption.targetLanguage(getLanguage(translateTo)), Translate.TranslateOption.model("base"));
+        String translatedText = translation.getTranslatedText();
 
         //Translated text and original text are set to TextViews:
         translatedTv.setText(translatedText);
-
-
     }
 
     public boolean checkInternetConnection() {
@@ -173,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
         //Means that we are connected to a network (mobile or wi-fi)
-        connected = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+        boolean connected = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
                 connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED;
 
         return connected;
@@ -185,7 +190,6 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         return false;
     }
-
 
     private void showImageImportDialog() {
         //items to display in dialog
@@ -266,22 +270,21 @@ public class MainActivity extends AppCompatActivity {
     //handle permission result
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        switch(requestCode){
+        switch (requestCode) {
             case CAMERA_REQUEST_CODE:
-                if(grantResults.length > 0){
+                if (grantResults.length > 0) {
                     boolean cameraAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
                     boolean writeStorageAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-                    if(cameraAccepted && writeStorageAccepted){
+                    if (cameraAccepted && writeStorageAccepted) {
                         pickCamera();
-                    }
-                    else{
+                    } else {
                         Toast.makeText(this, "permission denied", Toast.LENGTH_SHORT).show();
                     }
                 }
                 break;
 
             case STORAGE_REQUEST_CODE:
-                if(grantResults.length > 0) {
+                if (grantResults.length > 0) {
                     boolean writeStorageAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
                     if (writeStorageAccepted) {
                         pickGallery();
@@ -289,7 +292,7 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(this, "permission denied", Toast.LENGTH_SHORT).show();
                     }
                 }
-            break;
+                break;
         }
     }
 
@@ -320,9 +323,8 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
 
             }
-        }
-        else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-            Toast.makeText(this, "cropping error" , Toast.LENGTH_SHORT).show();
+        } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+            Toast.makeText(this, "cropping error", Toast.LENGTH_SHORT).show();
         }
     }
 

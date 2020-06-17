@@ -15,16 +15,25 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
+import com.google.cloud.translate.Translate;
+import com.google.cloud.translate.Translation;
 
 public class SecondActivity extends AppCompatActivity {
 
     TextView mResult;
     ImageView mPreviewIv;
     Uri image_uri;
+    Translate translate;
 
+    private String translate(String originalText) {
+        //String language = ((MainActivity)getApplicationContext()).getTranslateTo();
+        String language = MainActivity.getLanguage(MainActivity.getTranslateTo());
+        Translation translation = MainActivity.translate.translate(originalText, Translate.TranslateOption.targetLanguage(language), Translate.TranslateOption.model("base"));
+        return translation.getTranslatedText();
+    }
 
     @Override
-    protected void onCreate( Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second);
 
@@ -39,6 +48,12 @@ public class SecondActivity extends AppCompatActivity {
         BitmapDrawable bitmapDrawable = (BitmapDrawable) mPreviewIv.getDrawable();
         Bitmap bitmap = bitmapDrawable.getBitmap();
 
+        String originalText ="Bine ai venit!";
+        String language = MainActivity.getLanguage(MainActivity.getTranslateTo());
+        System.out.println("Limba: " + language);
+        String translated= translate(originalText);
+        System.out.println(translated);
+
         TextRecognizer recognizer = new TextRecognizer.Builder(getApplicationContext()).build();
 
         if (!recognizer.isOperational()) {
@@ -50,7 +65,7 @@ public class SecondActivity extends AppCompatActivity {
             //get text from sb until there is no text
             for (int i = 0; i < items.size(); i++) {
                 TextBlock myItem = items.valueAt(i);
-                sb.append(myItem.getValue());
+                sb.append(translate(myItem.getValue()));
                 sb.append("\n");
             }
             //set text to edit text
