@@ -30,6 +30,7 @@ import com.example.photolate.textdetection.others.GraphicOverlay;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.vision.L;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.translate.Translate;
 import com.google.cloud.translate.TranslateOptions;
@@ -112,8 +113,7 @@ public class TextRecognitionProcessor {
 
         String language = MainActivity.getLanguage(MainActivity.getTranslateTo());
         Translation translation = translate.translate(originalText, Translate.TranslateOption.targetLanguage(language), Translate.TranslateOption.model("base"));
-        String translatedText = translation.getTranslatedText();
-        return translatedText;
+        return translation.getTranslatedText();
     }
 
 
@@ -126,13 +126,14 @@ public class TextRecognitionProcessor {
         for (int i = 0; i < blocks.size(); i++) {
             List<FirebaseVisionText.Line> lines = blocks.get(i).getLines();
             for (int j = 0; j < lines.size(); j++) {
+
                 List<FirebaseVisionText.Element> elements = lines.get(j).getElements();
                 for (int k = 0; k < elements.size(); k++) {
-                    // Larisa
+
                     String word = elements.get(k).getText();
                     String translated = translate(word);
-                    elements.get(k);
-                    GraphicOverlay.Graphic textGraphic = new TextGraphic(graphicOverlay, elements.get(k));
+
+                    GraphicOverlay.Graphic textGraphic = new TextGraphic(graphicOverlay, elements.get(k), translated);
                     graphicOverlay.add(textGraphic);
 
                 }
